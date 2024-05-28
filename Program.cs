@@ -12,6 +12,21 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<HomeBankingContext>();
+        DBInitializer.Initialize(context);
+    }
+    catch(Exception ex) {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ha ocurrido un error al enviar la información a la base de datos!");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
