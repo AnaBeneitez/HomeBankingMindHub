@@ -9,7 +9,7 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private IClientRepository _clientRepository;
+        private readonly IClientRepository _clientRepository;
 
         public ClientsController(IClientRepository clientRepository)
         {
