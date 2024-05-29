@@ -31,6 +31,25 @@
                     context.SaveChanges();
                 }
             }
+
+            if (!context.Transactions.Any())
+            {
+                var accountVIN001 = context.Accounts.FirstOrDefault(a => a.Number == "VIN001");
+                if (accountVIN001 != null)
+                {
+                    var transactionsVIN001 = new Transaction[]
+                    {
+                        new Transaction { AccountId = accountVIN001.Id, Type = Enums.TransactionType.CREDIT.ToString(),
+                            Amount = 20000, Description = "Acreditacion de haberes", Date = DateTime.Now.AddHours(-10)},
+                        new Transaction { AccountId = accountVIN001.Id, Type = Enums.TransactionType.DEBIT.ToString(),
+                            Amount = 5000, Description = "Verduleria Los mellis - Compra", Date = DateTime.Now.AddHours(-6)},
+                        new Transaction { AccountId = accountVIN001.Id, Type = Enums.TransactionType.DEBIT.ToString(),
+                            Amount = 10000, Description = "Almacen Francesca - Compra", Date = DateTime.Now.AddHours(-2)}
+                    };
+                    context.Transactions.AddRange(transactionsVIN001);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ builder.Services.AddDbContext<HomeBankingContext>(
 
 // Add repositories to the container
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
