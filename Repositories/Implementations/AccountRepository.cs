@@ -19,5 +19,11 @@ namespace HomeBankingMindHub.Repositories.Implementations
         {
             return this.FindByCondition(a => a.Id == id).Include(a => a.Transactions).FirstOrDefault();
         }
+
+        public void Save(Account account)
+        {
+            Create(account);
+            SaveChanges();
+        }
     }
 }
