@@ -15,17 +15,20 @@ namespace HomeBankingMindHub.Repositories.Interfaces
         }
         public void Create(T entity)
         {
-            RepositoryContext.Set<T>().Add(entity);
+            RepositoryContext.Set<T>()
+                .Add(entity);
         }
 
         public void Delete(T entity)
         {
-            RepositoryContext.Set<T>().Remove(entity);
+            RepositoryContext.Set<T>()
+                .Remove(entity);
         }
 
         public IQueryable<T> FindAll()
         {
-            return RepositoryContext.Set<T>().AsNoTrackingWithIdentityResolution();
+            return RepositoryContext.Set<T>()
+                .AsNoTrackingWithIdentityResolution();
         }
 
         public IQueryable<T> FindAll(Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
@@ -41,7 +44,9 @@ namespace HomeBankingMindHub.Repositories.Interfaces
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
-            return RepositoryContext.Set<T>().Where(expression).AsNoTrackingWithIdentityResolution();
+            return RepositoryContext.Set<T>()
+                .Where(expression)
+                .AsNoTrackingWithIdentityResolution();
         }
 
         public void SaveChanges()
@@ -51,7 +56,8 @@ namespace HomeBankingMindHub.Repositories.Interfaces
 
         public void Update(T entity)
         {
-            RepositoryContext.Set<T>().Update(entity);
+            RepositoryContext.Set<T>()
+                .Update(entity);
         }
     }
 }

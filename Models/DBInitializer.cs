@@ -50,6 +50,55 @@
                     context.SaveChanges();
                 }
             }
+
+            if (!context.Loans.Any())
+            {
+                var loans = new Loan[]
+                {
+                    new Loan{Name= "Hipotecario", MaxAmount = 5000000, Payments= "12,24,36,48,60"},
+                    new Loan{Name= "Refacción", MaxAmount = 3000000, Payments= "12,24,36,48"},
+                    new Loan{Name= "Automotor", MaxAmount = 1000000, Payments= "12,24,36"},
+                    new Loan{Name= "Personal", MaxAmount = 500000, Payments= "6,12,24"}
+                };
+
+                context.Loans.AddRange(loans);
+                context.SaveChanges();
+
+                var clientAna = context.Clients.FirstOrDefault(c => c.Email == "ana@gmail.com");
+               
+                if(clientAna != null)
+                {
+                    var loan1 = context.Loans.FirstOrDefault(l => l.Name == "Hipotecario");
+                   
+                    if (loan1 != null)
+                    {
+                        var anaLoans1 = new ClientLoan {Amount = 4500000, ClientId = clientAna.Id, LoanId = loan1.Id, Payments = "48"};
+
+                        context.ClientLoans.Add(anaLoans1);
+                    }
+
+                    var loan2 = context.Loans.FirstOrDefault(l => l.Name == "Automotor");
+
+                    if (loan2 != null)
+                    {
+                        var anaLoans2 = new ClientLoan { Amount = 600000, ClientId = clientAna.Id, LoanId = loan2.Id, Payments = "24"};
+
+                        context.ClientLoans.Add(anaLoans2);
+                    }
+
+                    var loan3 = context.Loans.FirstOrDefault(l => l.Name == "Personal");
+
+                    if (loan3 != null)
+                    {
+                        var analoan3 = new ClientLoan { Amount = 200000, ClientId = clientAna.Id, LoanId = loan3.Id, Payments = "6" };
+
+                        context.ClientLoans.Add(analoan3);
+                    }
+                    context.SaveChanges();
+                }
+            }
+
+
         }
     }
 }

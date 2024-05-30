@@ -12,12 +12,16 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public IEnumerable<Account> GetAllAccounts()
         {
-            return this.FindAll().Include(a => a.Transactions).ToList();
+            return this.FindAll()
+                .Include(a => a.Transactions)
+                .ToList();
         }
 
         public Account FindById(long id)
         {
-            return this.FindByCondition(a => a.Id == id).Include(a => a.Transactions).FirstOrDefault();
+            return this.FindByCondition(a => a.Id == id)
+                .Include(a => a.Transactions)
+                .FirstOrDefault();
         }
 
         public void Save(Account account)

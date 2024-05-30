@@ -12,12 +12,14 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public Transaction FindTransactionById(long id)
         {
-            return this.FindByCondition(a => a.Id == id).FirstOrDefault();
+            return this.FindByCondition(a => a.Id == id)
+                .FirstOrDefault();
         }
 
         public IEnumerable<Transaction> GetAllTransactions()
         {
-            return this.FindAll().ToList();
+            return this.FindAll()
+                .ToList();
         }
 
         public void Save(Transaction transaction)
