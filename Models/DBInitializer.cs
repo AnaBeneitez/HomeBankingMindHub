@@ -1,4 +1,6 @@
-﻿namespace HomeBankingMindHub.Models
+﻿using HomeBankingMindHub.Models.Enums;
+
+namespace HomeBankingMindHub.Models
 {
     public class DBInitializer
     {
@@ -98,7 +100,42 @@
                 }
             }
 
+            if (!context.Cards.Any())
+            {
+                var clientAna = context.Clients.FirstOrDefault(c => c.Email == "ana@gmail.com");
 
+                if (clientAna != null)
+                {
+                    var cards = new Card[]
+                    {
+                        new Card
+                        {
+                            ClientId= clientAna.Id,
+                            CardHolder = $"{clientAna.FirstName} {clientAna.LastName}",
+                            Type = CardType.DEBIT.ToString(),
+                            Color = CardColor.GOLD.ToString(),
+                            Number = "3189-5896-1432-7485",
+                            Cvv = 690,
+                            FromDate= DateTime.Now,
+                            ThruDate= DateTime.Now.AddYears(6),
+                        },
+                        new Card
+                        {
+                            ClientId= clientAna.Id,
+                            CardHolder = $"{clientAna.FirstName} {clientAna.LastName}",
+                            Type = CardType.CREDIT.ToString(),
+                            Color = CardColor.TITANIUM.ToString(),
+                            Number = "1234-5678-9123-4567",
+                            Cvv = 526,
+                            FromDate= DateTime.Now,
+                            ThruDate= DateTime.Now.AddYears(6),
+                        }
+                    };
+
+                    context.AddRange(cards);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }
