@@ -82,5 +82,39 @@ namespace HomeBankingMindHub.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] ClientRegisterDTO client)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(client.Email) || String.IsNullOrEmpty(client.Password) || String.IsNullOrEmpty(client.FirstName) || String.IsNullOrEmpty(client.LastName))
+                    return StatusCode(403, "datos inválidos");
+
+                Client user = _clientRepository.FindByEmail(client.Email);
+
+                if (user != null)
+                {
+                    return StatusCode(403, "El Email ya corresponde a un usuario registrado");
+                }
+
+                Client newClient = new Client()
+                {
+                    Email = client.Email,
+                    Password = client.Password,
+                    FirstName = client.FirstName,
+                    LastName = client.LastName
+                };
+
+                _clientRepository.Save(newClient);
+                ClientDTO clientDTO = new ClientDTO(newClient);
+                return Created("Cliente creado correctamente", clientDTO);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
