@@ -13,6 +13,10 @@ namespace HomeBankingMindHub.Models.DTOS
         public ICollection<ClientLoanDTO> Loans { get; set; }
         public ICollection<CardDTO> Cards { get; set; }
 
+        public ClientDTO()
+        {
+           
+        }
         public ClientDTO(Client client)
         {
             Id = client.Id;

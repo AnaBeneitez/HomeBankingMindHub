@@ -107,7 +107,12 @@ namespace HomeBankingMindHub.Controllers
                 };
 
                 _clientRepository.Save(newClient);
-                ClientDTO clientDTO = new ClientDTO(newClient);
+                var dbClient = _clientRepository.FindByEmail(newClient.Email);
+                if (dbClient == null)
+                {
+                    return BadRequest();
+                }
+                var clientDTO = new ClientDTO(dbClient);
                 return Created("Cliente creado correctamente", clientDTO);
 
             }
