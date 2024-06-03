@@ -19,6 +19,15 @@ namespace HomeBankingMindHub.Repositories.Implementations
                 .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
+        public Client FindByEmail(string email)
+        {
+            return FindByCondition(c => c.Email == email)
+                .Include(c => c.Accounts)
+                .Include(c => c.Cards)
+                .Include(c => c.ClientLoans)
+                .ThenInclude(cl => cl.Loan)
+                .FirstOrDefault();
+        }
 
         public IEnumerable<Client> GetAllClients()
         {

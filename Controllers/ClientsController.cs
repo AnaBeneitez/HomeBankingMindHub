@@ -1,4 +1,5 @@
-﻿using HomeBankingMindHub.Models.DTOS;
+﻿using HomeBankingMindHub.Models;
+using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,35 @@ namespace HomeBankingMindHub.Controllers
 
                 var clientDTO = new ClientDTO(client);
                 return Ok(clientDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("current")]
+        public IActionResult GetCurrent()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null? User.FindFirst("CLient").Value : string.Empty;
+
+                if(email == string.Empty)
+                {
+                    return Forbid();
+                }
+
+                Client client = _clientRepository.FindByEmail(email);
+
+                if(client == null )
+                {
+                    return Forbid(); 
+                }
+
+                var clientDTO = new ClientDTO(client);
+                return Ok(clientDTO);
+
             }
             catch (Exception ex)
             {
