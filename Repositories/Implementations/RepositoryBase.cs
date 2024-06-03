@@ -1,9 +1,10 @@
 ﻿using System.Linq.Expressions;
 using HomeBankingMindHub.Models;
+using HomeBankingMindHub.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace HomeBankingMindHub.Repositories.Interfaces
+namespace HomeBankingMindHub.Repositories.Implementations
 {
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
