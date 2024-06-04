@@ -31,10 +31,12 @@ namespace HomeBankingMindHub.Controllers
                     return Unauthorized();
                 }
 
-                var claims = new List<Claim>
-                {
-                    new Claim("Client", user.Email)
-                };
+                var claims = new List<Claim>();
+
+                if (user.Email.Equals("ana@gmail.com"))
+                    claims.Add(new Claim ("Admin", user.Email ));
+
+                claims.Add(new Claim("Client", user.Email ));
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

@@ -19,6 +19,7 @@ namespace HomeBankingMindHub.Controllers
         }
 
         [HttpGet]
+        [Authorize (Policy = "AdminOnly")]
         public IActionResult Get()
         {
             try
@@ -43,7 +44,7 @@ namespace HomeBankingMindHub.Controllers
 
                 if(client == null) 
                 { 
-                    return Forbid(); 
+                    return StatusCode(403, "User not found"); 
                 }
 
                 var clientDTO = new ClientDTO(client);
