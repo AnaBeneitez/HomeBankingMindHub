@@ -21,7 +21,7 @@ namespace HomeBankingMindHub.Repositories.Implementations
         }
         public Client FindByEmail(string email)
         {
-            return FindByCondition(c => c.Email == email)
+            return FindByCondition(c => c.Email.ToUpper() == email.ToUpper())
                 .Include(c => c.Accounts)
                 .Include(c => c.Cards)
                 .Include(c => c.ClientLoans)

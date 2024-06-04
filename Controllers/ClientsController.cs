@@ -1,6 +1,7 @@
 ﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,6 +56,7 @@ namespace HomeBankingMindHub.Controllers
         }
 
         [HttpGet("current")]
+        [Authorize(Policy = "ClientOnly")]
         public IActionResult GetCurrent()
         {
             try
@@ -63,14 +65,14 @@ namespace HomeBankingMindHub.Controllers
 
                 if(email == string.Empty)
                 {
-                    return Forbid();
+                    return StatusCode(403, "Unauthorized");
                 }
 
                 Client client = _clientRepository.FindByEmail(email);
 
                 if(client == null )
                 {
-                    return Forbid(); 
+                    return StatusCode(403, "User not found"); 
                 }
 
                 var clientDTO = new ClientDTO(client);
