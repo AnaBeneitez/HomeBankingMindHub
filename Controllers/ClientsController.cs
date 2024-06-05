@@ -44,7 +44,7 @@ namespace HomeBankingMindHub.Controllers
 
                 if(client == null) 
                 { 
-                    return StatusCode(403, "User not found"); 
+                    return StatusCode(403, "Usuario no encontrado"); 
                 }
 
                 var clientDTO = new ClientDTO(client);
@@ -66,14 +66,14 @@ namespace HomeBankingMindHub.Controllers
 
                 if(email == string.Empty)
                 {
-                    return StatusCode(403, "Unauthorized");
+                    return StatusCode(403, "No autorizado");
                 }
 
                 Client client = _clientRepository.FindByEmail(email);
 
                 if(client == null )
                 {
-                    return StatusCode(403, "User not found"); 
+                    return StatusCode(403, "Usuario no encontrado"); 
                 }
 
                 var clientDTO = new ClientDTO(client);
@@ -123,6 +123,24 @@ namespace HomeBankingMindHub.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpPost("current/accounts")]
+        public IActionResult CreateAccount()
+        {
+            string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
+
+            if (email == string.Empty)
+            {
+                return StatusCode(403, "No autorizado");
+            }
+
+            Client current = _clientRepository.FindByEmail(email);
+            if (current == null) 
+            {
+                return StatusCode(403, "Usuario no encontrado");
+            }
+            return Created("", current);
         }
     }
 }
