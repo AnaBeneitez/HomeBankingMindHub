@@ -1,9 +1,12 @@
 ﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
+using HomeBankingMindHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBankingMindHub.Controllers
 {
@@ -11,11 +14,11 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private readonly IClientRepository _clientRepository;
+        private readonly IClientsService _clientsService;
 
-        public ClientsController(IClientRepository clientRepository)
+        public ClientsController(IClientsService clientsService)
         {
-            this._clientRepository = clientRepository;
+            this._clientsService = clientsService;
         }
 
         [HttpGet]
@@ -24,10 +27,9 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                var clients = _clientRepository.GetAllClients();
-                var clientsDTO = new List<ClientDTO>();
-                clientsDTO = clients.Select(c => new ClientDTO(c)).ToList();
-                return Ok(clientsDTO);
+                ResponseCollection<ClientDTO> response = _clientsService.Get();
+    
+                return StatusCode(response.StatusCode, response.Collection);
             }
             catch (Exception ex)
             {
@@ -40,15 +42,12 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                var client = _clientRepository.FindById(id);
+                ResponseModel<ClientDTO> response = _clientsService.GetById(id);
 
-                if(client == null) 
-                { 
-                    return StatusCode(403, "Usuario no encontrado"); 
-                }
+                if (response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                var clientDTO = new ClientDTO(client);
-                return Ok(clientDTO);
+                return StatusCode(response.StatusCode, response.Model);
             }
             catch (Exception ex)
             {
@@ -64,20 +63,12 @@ namespace HomeBankingMindHub.Controllers
             {
                 string email = User.FindFirst("Client") != null? User.FindFirst("CLient").Value : string.Empty;
 
-                if(email == string.Empty)
-                {
-                    return StatusCode(403, "No autorizado");
-                }
+                ResponseModel<ClientDTO> response = _clientsService.GetCurrent(email);
 
-                Client client = _clientRepository.FindByEmail(email);
+                if (response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                if(client == null )
-                {
-                    return StatusCode(403, "Usuario no encontrado"); 
-                }
-
-                var clientDTO = new ClientDTO(client);
-                return Ok(clientDTO);
+                return StatusCode(response.StatusCode, response.Model);
 
             }
             catch (Exception ex)
@@ -92,31 +83,14 @@ namespace HomeBankingMindHub.Controllers
             try
             {
                 if (String.IsNullOrEmpty(client.Email) || String.IsNullOrEmpty(client.Password) || String.IsNullOrEmpty(client.FirstName) || String.IsNullOrEmpty(client.LastName))
-                    return StatusCode(403, "datos inválidos");
+                    return StatusCode(400, "datos inválidos");
 
-                Client user = _clientRepository.FindByEmail(client.Email);
+                ResponseModel<ClientDTO> response = _clientsService.Post(client);
 
-                if (user != null)
-                {
-                    return StatusCode(403, "El Email ya corresponde a un usuario registrado");
-                }
+                if (response.StatusCode != 201)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                Client newClient = new Client()
-                {
-                    Email = client.Email,
-                    Password = client.Password,
-                    FirstName = client.FirstName,
-                    LastName = client.LastName
-                };
-
-                _clientRepository.Save(newClient);
-                var dbClient = _clientRepository.FindByEmail(newClient.Email);
-                if (dbClient == null)
-                {
-                    return BadRequest();
-                }
-                var clientDTO = new ClientDTO(dbClient);
-                return Created("Cliente creado correctamente", clientDTO);
+                return StatusCode(response.StatusCode, response.Model);
 
             }
             catch (Exception ex)
@@ -128,19 +102,81 @@ namespace HomeBankingMindHub.Controllers
         [HttpPost("current/accounts")]
         public IActionResult CreateAccount()
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
-
-            if (email == string.Empty)
+            try
             {
-                return StatusCode(403, "No autorizado");
-            }
+                string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
 
-            Client current = _clientRepository.FindByEmail(email);
-            if (current == null) 
-            {
-                return StatusCode(403, "Usuario no encontrado");
+                ResponseModel<ClientDTO> response = _clientsService.CreateAccount(email);
+
+                if (response.StatusCode != 201)
+                    return StatusCode(response.StatusCode, response.Message);
+
+                return StatusCode(response.StatusCode, response.Model);
+
             }
-            return Created("", current);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("current/accounts")]
+        public IActionResult GetAccounts()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
+
+                ResponseCollection<AccountClientDTO> response = _clientsService.GetAccounts(email);
+
+                if (response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
+
+                return StatusCode(response.StatusCode, response.Collection);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpPost("current/cards")]
+        public IActionResult CreateCard([FromBody] NewCardDTO newCard)
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
+
+                Response response = _clientsService.CreateCard(email, newCard);
+
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("current/cards")]
+        public IActionResult GetCards()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
+
+                ResponseCollection<CardDTO> response = _clientsService.GetCards(email);
+
+                if (response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
+
+                return StatusCode(response.StatusCode, response.Collection);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

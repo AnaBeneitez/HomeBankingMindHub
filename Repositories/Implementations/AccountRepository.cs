@@ -1,5 +1,6 @@
 ﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Repositories.Interfaces;
+using HomeBankingMindHub.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeBankingMindHub.Repositories.Implementations
@@ -24,9 +25,36 @@ namespace HomeBankingMindHub.Repositories.Implementations
                 .FirstOrDefault();
         }
 
+        public Account FindByVIN(string vin)
+        {
+            return this.FindByCondition(a => a.Number == vin)
+                .Include(a => a.Transactions)
+                .FirstOrDefault();
+        }
+
         public void Save(Account account)
         {
-            Create(account);
+            if (account.Id == 0)
+            {
+                bool condition = true;
+                string vinGenerate = string.Empty;
+
+                while (condition)
+                {
+                    vinGenerate = RandomGenerator.GenerateVIN();
+                    var dbAcc = FindByVIN(vinGenerate);
+                    if (dbAcc == null) condition = false;
+                }
+
+                account.Number = vinGenerate;
+
+                Create(account);
+            }
+            else
+            {
+                Update(account);
+            }
+
             SaveChanges();
         }
 
