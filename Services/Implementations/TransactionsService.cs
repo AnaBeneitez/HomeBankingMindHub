@@ -69,8 +69,18 @@ namespace HomeBankingMindHub.Services.Implementations
 
             if (response.StatusCode == 201)
             {
-                Transaction fromTransaction = new Transaction(TransactionType.DEBIT.ToString(), (transferDTO.Amount * -1), $"{to.Number} - {transferDTO.Description}", DateTime.Now, from.Id);
-                Transaction toTransaction = new Transaction(TransactionType.CREDIT.ToString(), transferDTO.Amount, $"{from.Number} - {transferDTO.Description}", DateTime.Now, to.Id);
+                Transaction fromTransaction = new Transaction(
+                    TransactionType.DEBIT.ToString(), 
+                    (transferDTO.Amount * -1), 
+                    $"{transferDTO.Description} - Enviado a cta {to.Number}", 
+                    DateTime.Now, 
+                    from.Id);
+                Transaction toTransaction = new Transaction(
+                    TransactionType.CREDIT.ToString(), 
+                    transferDTO.Amount,
+                    $"{transferDTO.Description} - Recibido de cta {from.Number}",
+                    DateTime.Now,
+                    to.Id);
 
                 _transactionRepository.Save(fromTransaction);
                 _transactionRepository.Save(toTransaction);
