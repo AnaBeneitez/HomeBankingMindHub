@@ -25,8 +25,8 @@ namespace HomeBankingMindHub.Models
                 if (clientAna != null)
                 {
                     var accountsAna = new Account[] {
-                        new Account{ClientId = clientAna.Id, CreationDate = DateTime.Now, Number = "VIN001", Balance = 100000 },
-                        new Account{ClientId = clientAna.Id, CreationDate= DateTime.Now, Number ="VIN002", Balance = 10 }
+                        new Account{ClientId = clientAna.Id, CreationDate = DateTime.Now, Number = "VIN-00100000", Balance = 100000 },
+                        new Account{ClientId = clientAna.Id, CreationDate= DateTime.Now, Number ="VIN-00200000", Balance = 200000 }
                     };
 
                     context.Accounts.AddRange(accountsAna);
@@ -36,7 +36,7 @@ namespace HomeBankingMindHub.Models
 
             if (!context.Transactions.Any())
             {
-                var accountVIN001 = context.Accounts.FirstOrDefault(a => a.Number == "VIN001");
+                var accountVIN001 = context.Accounts.FirstOrDefault(a => a.Number == "VIN-00100000");
                 if (accountVIN001 != null)
                 {
                     var transactionsVIN001 = new Transaction[]

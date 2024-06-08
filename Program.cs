@@ -21,11 +21,14 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IClientLoanRepository, ClientLoanRepository>();
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 
 //Add services to the container
 builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IValidationsService, ValidationService>();
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
+builder.Services.AddScoped<ILoansServices, LoansService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

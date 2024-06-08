@@ -13,21 +13,21 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public IEnumerable<Account> GetAllAccounts()
         {
-            return this.FindAll()
+            return FindAll()
                 .Include(a => a.Transactions)
                 .ToList();
         }
 
         public Account FindById(long id)
         {
-            return this.FindByCondition(a => a.Id == id)
+            return FindByCondition(a => a.Id == id)
                 .Include(a => a.Transactions)
                 .FirstOrDefault();
         }
 
         public Account FindByVIN(string vin)
         {
-            return this.FindByCondition(a => a.Number.ToUpper() == vin.ToUpper())
+            return FindByCondition(a => a.Number.ToUpper() == vin.ToUpper())
                 .Include(a => a.Transactions)
                 .FirstOrDefault();
         }
@@ -61,7 +61,7 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public IEnumerable<Account> GetAccountsByClient(long clientId)
         {
-            return this.FindByCondition(a =>a.ClientId == clientId)
+            return FindByCondition(a =>a.ClientId == clientId)
                 .Include(a => a.Transactions)
                 .ToList();
         }

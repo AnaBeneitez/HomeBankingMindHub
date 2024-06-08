@@ -7,6 +7,6 @@ namespace HomeBankingMindHub.Services.Interfaces
     {
         ResponseCollection<TransactionDTO> Get();
         ResponseModel<TransactionDTO> GetById(long id);
-        Response MakeTransfer(TransferDTO transferDTO, string currentMail);
+        Response MakeTransfer(TransferDTO transferDTO, string currentEmail);
     }
 }

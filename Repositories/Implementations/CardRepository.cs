@@ -12,24 +12,24 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public Card FindById(long id)
         {
-            return this.FindByCondition(c => c.Id == id)
+            return FindByCondition(c => c.Id == id)
                 .FirstOrDefault();
         }
 
         public Card FindByNumber(string number)
         {
-            return this.FindByCondition(c => c.Number == number)
+            return FindByCondition(c => c.Number == number)
                 .FirstOrDefault();
         }
 
         public IEnumerable<Card> GetAllCards()
         {
-            return this.FindAll().ToList();
+            return FindAll().ToList();
         }
 
         public IEnumerable<Card> GetCardsByClient(long clientId)
         {
-            return this.FindByCondition(c => c.ClientId == clientId)
+            return FindByCondition(c => c.ClientId == clientId)
                 .ToList();
         }
 

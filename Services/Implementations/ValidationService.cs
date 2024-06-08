@@ -7,6 +7,43 @@ namespace HomeBankingMindHub.Services.Implementations
 {
     public class ValidationService : IValidationsService
     {
+        public Response GrantLoan(LoanApplicationDTO loanApplicationDTO, Loan loan, List<string> payments, Account toAccount, long currentId)
+        {
+            Response response;
+
+            if (loanApplicationDTO.LoanId == 0 || loanApplicationDTO.Amount == 0 ||
+                loanApplicationDTO.Payments.Equals("0") || loanApplicationDTO.Payments.IsNullOrEmpty() || loanApplicationDTO.ToAccountNumber.IsNullOrEmpty())
+            {
+                response = new Response(403, "Faltan campos");
+            }
+            else if(loan == null)
+            {
+                response = new Response(403, "El préstamo no existe");
+            }
+            else if(loanApplicationDTO.Amount > loan.MaxAmount)
+            {
+                response = new Response(403, "El monto solicitado excede el monto máximo");
+            }
+            else if (!payments.Contains(loanApplicationDTO.Payments))
+            {
+                response = new Response(403, "Las cuotas elegidas no están disponibles para este préstamo");
+            }
+            else if(toAccount == null)
+            {
+                response = new Response(403, "La cuenta de destino no existe");
+            }
+            else if(toAccount.ClientId != currentId)
+            {
+                response = new Response(403, "La cuenta no pertenece al cliente autenticado");
+            }
+            else
+            {
+                response = new Response(201, "Ok");
+            }
+
+            return response;
+        }
+
         public Response MakeTransfer(TransferDTO transferDTO, Account fromAccount, Account toAccount, long currentId)
         {
             Response response;
