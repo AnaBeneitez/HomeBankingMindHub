@@ -24,6 +24,8 @@ builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 //Add services to the container
 builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IValidationsService, ValidationService>();
+builder.Services.AddScoped<ITransactionsService, TransactionsService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

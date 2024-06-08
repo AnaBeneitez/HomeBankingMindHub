@@ -27,7 +27,7 @@ namespace HomeBankingMindHub.Repositories.Implementations
 
         public Account FindByVIN(string vin)
         {
-            return this.FindByCondition(a => a.Number == vin)
+            return this.FindByCondition(a => a.Number.ToUpper() == vin.ToUpper())
                 .Include(a => a.Transactions)
                 .FirstOrDefault();
         }
@@ -56,6 +56,7 @@ namespace HomeBankingMindHub.Repositories.Implementations
             }
 
             SaveChanges();
+            RepositoryContext.ChangeTracker.Clear();
         }
 
         public IEnumerable<Account> GetAccountsByClient(long clientId)

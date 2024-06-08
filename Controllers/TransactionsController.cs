@@ -1,7 +1,10 @@
-﻿using HomeBankingMindHub.Models.DTOS;
+﻿using HomeBankingMindHub.Models;
+using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
+using HomeBankingMindHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBankingMindHub.Controllers
 {
@@ -9,22 +12,26 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly ITransactionsService _transactionsService;
 
-        public TransactionsController(ITransactionRepository transactionRepository)
+        public TransactionsController(ITransactionsService transactionsService)
         {
-            this._transactionRepository = transactionRepository;
+            _transactionsService = transactionsService;
         }
+
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
-                var transactions = _transactionRepository.GetAllTransactions();
-                var transactionsDTO = new List<TransactionDTO>();
-                transactionsDTO = transactions.Select(t => new TransactionDTO(t)).ToList();
+                ResponseCollection<TransactionDTO> response = _transactionsService.Get();
 
-                return Ok(transactionsDTO);
+                if(response.StatusCode != 200)
+                {
+                    return StatusCode(response.StatusCode, response.Message);
+                }
+
+                return StatusCode(response.StatusCode, response.Collection);
             }
             catch (Exception ex)
             {
@@ -37,19 +44,35 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                var transactionById = _transactionRepository.FindTransactionById(id);
+                ResponseModel<TransactionDTO> response = _transactionsService.GetById(id);
 
-                if (transactionById == null)
+                if (response.StatusCode != 200)
                 {
-                    return Forbid();
+                    return StatusCode(response.StatusCode, response.Message);
                 }
-                var transactionByIdDTO = new TransactionDTO(transactionById);
 
-                return Ok(transactionByIdDTO);
+                return StatusCode(response.StatusCode, response.Model);
             }
             catch (Exception ex) 
             { 
                 return StatusCode(500, ex.Message); 
+            }
+        }
+
+        [HttpPost]
+        public IActionResult MakeTransfer([FromBody] TransferDTO transfer)
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null? User.FindFirst("Client").Value: string.Empty;
+
+                Response response = _transactionsService.MakeTransfer(transfer, email);
+
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            catch (Exception ex)
+            {
+               return StatusCode(500, ex);
             }
         }
     }
