@@ -1,6 +1,5 @@
 ﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace HomeBankingMindHub.Repositories.Implementations
 {

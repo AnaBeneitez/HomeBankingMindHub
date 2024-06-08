@@ -1,10 +1,8 @@
 ﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Models.DTOS;
-using HomeBankingMindHub.Repositories.Interfaces;
 using HomeBankingMindHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBankingMindHub.Controllers
 {
