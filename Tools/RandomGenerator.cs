@@ -36,7 +36,7 @@
         {
             int CVVGenerate;
             Random random = new Random();
-            CVVGenerate= random.Next(0, 1000);
+            CVVGenerate= random.Next(100, 1000);
 
             Console.WriteLine(CVVGenerate);
             return CVVGenerate;
