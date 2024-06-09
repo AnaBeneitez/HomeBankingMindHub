@@ -6,7 +6,7 @@ namespace HomeBankingMindHub.Models
     {
         public static void Initialize(HomeBankingContext context)
         {
-            if (!context.Clients.Any())
+            /*if (!context.Clients.Any())
             {
                 var clients = new Client[]
                 {
@@ -51,7 +51,7 @@ namespace HomeBankingMindHub.Models
                     context.Transactions.AddRange(transactionsVIN001);
                     context.SaveChanges();
                 }
-            }
+            }*/
 
             if (!context.Loans.Any())
             {
@@ -66,7 +66,7 @@ namespace HomeBankingMindHub.Models
                 context.Loans.AddRange(loans);
                 context.SaveChanges();
 
-                var clientAna = context.Clients.FirstOrDefault(c => c.Email == "ana@gmail.com");
+                /*var clientAna = context.Clients.FirstOrDefault(c => c.Email == "ana@gmail.com");
                
                 if(clientAna != null)
                 {
@@ -97,9 +97,9 @@ namespace HomeBankingMindHub.Models
                         context.ClientLoans.Add(analoan3);
                     }
                     context.SaveChanges();
-                }
+                }*/
             }
-
+            /*
             if (!context.Cards.Any())
             {
                 var clientAna = context.Clients.FirstOrDefault(c => c.Email == "ana@gmail.com");
@@ -135,7 +135,7 @@ namespace HomeBankingMindHub.Models
                     context.AddRange(cards);
                     context.SaveChanges();
                 }
-            }
+            }*/
         }
     }
 }

@@ -40,24 +40,24 @@ namespace HomeBankingMindHub.Services.Implementations
 
             Response response = _validationsService.GrantLoan(loanApplicationDTO, loan, payments, toAccount, current.Id);
 
-            if(response.StatusCode == 201)
-            {
-                int percIncrease = 20;
+            if (response.StatusCode != 201)
+                return response;
 
-                ClientLoan newClientLoan = new ClientLoan(loanApplicationDTO, current.Id, percIncrease);
-                _clientLoanRepository.Save(newClientLoan);
+            int percIncrease = 20;
 
-                Transaction transaction = new Transaction(
-                    TransactionType.CREDIT.ToString(), 
-                    newClientLoan.Amount, 
-                    $"{loan.Name} - Préstamo aprobado",
-                    DateTime.Now,
-                    toAccount.Id);
-                _transactionRepository.Save(transaction);
+            ClientLoan newClientLoan = new ClientLoan(loanApplicationDTO, current.Id, percIncrease);
+            _clientLoanRepository.Save(newClientLoan);
 
-                toAccount.Balance += newClientLoan.Amount;
-                _accountRepository.Save(toAccount);
-            }
+            Transaction transaction = new Transaction(
+                TransactionType.CREDIT.ToString(),
+                newClientLoan.Amount,
+                $"{loan.Name} - Préstamo aprobado",
+                DateTime.Now,
+                toAccount.Id);
+            _transactionRepository.Save(transaction);
+
+            toAccount.Balance += newClientLoan.Amount;
+            _accountRepository.Save(toAccount);
 
             return response;
         }

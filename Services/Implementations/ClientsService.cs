@@ -12,12 +12,14 @@ namespace HomeBankingMindHub.Services.Implementations
         private readonly IClientRepository _clientRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ICardRepository _cardRepository;
+        private readonly IEncryptsService _encryptsService;
         
-        public ClientsService(IClientRepository clientRepository, IAccountRepository accountRepository, ICardRepository cardRepository)
+        public ClientsService(IClientRepository clientRepository, IAccountRepository accountRepository, ICardRepository cardRepository, IEncryptsService encryptsService)
         {
             _clientRepository = clientRepository;
             _accountRepository = accountRepository;
             _cardRepository = cardRepository;
+            _encryptsService = encryptsService;
         }
         public ResponseModel<ClientDTO> CreateAccount(string email)
         {
@@ -161,6 +163,11 @@ namespace HomeBankingMindHub.Services.Implementations
                 FirstName = client.FirstName,
                 LastName = client.LastName
             };
+
+            _encryptsService.EncryptPassword(client.Password, out byte[] salt, out string password);
+
+            newClient.Salt = salt;
+            newClient.Password = password;
 
             _clientRepository.Save(newClient);
 

@@ -26,9 +26,10 @@ builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 
 //Add services to the container
 builder.Services.AddScoped<IClientsService, ClientsService>();
-builder.Services.AddScoped<IValidationsService, ValidationService>();
+builder.Services.AddScoped<IValidationsService, ValidationsService>();
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
 builder.Services.AddScoped<ILoansServices, LoansService>();
+builder.Services.AddScoped<IEncryptsService, EncryptsService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

@@ -2,6 +2,7 @@
 using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
+using HomeBankingMindHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -14,9 +15,11 @@ namespace HomeBankingMindHub.Controllers
     public class AuthController : ControllerBase
     {
         private IClientRepository _clientRepository;
-        public AuthController(IClientRepository clientRepository)
+        private readonly IEncryptsService _encryptsService;
+        public AuthController(IClientRepository clientRepository, IEncryptsService encryptsService)
         {
             _clientRepository = clientRepository;
+            _encryptsService = encryptsService;
         }
 
         [HttpPost("login")]
@@ -26,7 +29,7 @@ namespace HomeBankingMindHub.Controllers
             {
                 Client user = _clientRepository.FindByEmail(loginDTO.Email);
 
-                if (user == null || !String.Equals(loginDTO.Password, user.Password))
+                if (user == null || !_encryptsService.VerifyPassword(loginDTO.Password, user.Salt, user.Password))
                 {
                     return Unauthorized();
                 }

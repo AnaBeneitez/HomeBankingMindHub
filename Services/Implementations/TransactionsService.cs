@@ -67,30 +67,30 @@ namespace HomeBankingMindHub.Services.Implementations
 
             response = _validationsService.MakeTransfer(transferDTO, from, to, current.Id);
 
-            if (response.StatusCode == 201)
-            {
-                Transaction fromTransaction = new Transaction(
-                    TransactionType.DEBIT.ToString(), 
-                    (transferDTO.Amount * -1), 
-                    $"{transferDTO.Description} - Enviado a cta {to.Number}", 
-                    DateTime.Now, 
-                    from.Id);
-                Transaction toTransaction = new Transaction(
-                    TransactionType.CREDIT.ToString(), 
-                    transferDTO.Amount,
-                    $"{transferDTO.Description} - Recibido de cta {from.Number}",
-                    DateTime.Now,
-                    to.Id);
+            if (response.StatusCode != 201)
+                return response;
 
-                _transactionRepository.Save(fromTransaction);
-                _transactionRepository.Save(toTransaction);
+            Transaction fromTransaction = new Transaction(
+                TransactionType.DEBIT.ToString(), 
+                (transferDTO.Amount * -1), 
+                $"{transferDTO.Description} - Enviado a cta {to.Number}", 
+                DateTime.Now, 
+                from.Id);
+            Transaction toTransaction = new Transaction(
+                TransactionType.CREDIT.ToString(), 
+                transferDTO.Amount,
+                $"{transferDTO.Description} - Recibido de cta {from.Number}",
+                DateTime.Now,
+                to.Id);
 
-                from.Balance -= transferDTO.Amount;
-                to.Balance += transferDTO.Amount;
+            _transactionRepository.Save(fromTransaction);
+            _transactionRepository.Save(toTransaction);
 
-                _accountRepository.Save(from);
-                _accountRepository.Save(to);
-            }
+            from.Balance -= transferDTO.Amount;
+            to.Balance += transferDTO.Amount;
+
+            _accountRepository.Save(from);
+            _accountRepository.Save(to);
 
             return response;
         }

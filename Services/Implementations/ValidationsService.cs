@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HomeBankingMindHub.Services.Implementations
 {
-    public class ValidationService : IValidationsService
+    public class ValidationsService : IValidationsService
     {
         public Response GrantLoan(LoanApplicationDTO loanApplicationDTO, Loan loan, List<string> payments, Account toAccount, long currentId)
         {
