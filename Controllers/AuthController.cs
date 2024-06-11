@@ -1,11 +1,6 @@
-﻿using System.Security.Claims;
-using HomeBankingMindHub.Models;
+﻿using HomeBankingMindHub.Models;
 using HomeBankingMindHub.Models.DTOS;
-using HomeBankingMindHub.Repositories.Interfaces;
 using HomeBankingMindHub.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeBankingMindHub.Controllers
@@ -14,12 +9,11 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IClientRepository _clientRepository;
-        private readonly IEncryptsService _encryptsService;
-        public AuthController(IClientRepository clientRepository, IEncryptsService encryptsService)
-        {
-            _clientRepository = clientRepository;
-            _encryptsService = encryptsService;
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService) 
+        { 
+            _authService = authService;
         }
 
         [HttpPost("login")]
@@ -27,25 +21,14 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                Client user = _clientRepository.FindByEmail(loginDTO.Email);
+                Response response = _authService.Login(loginDTO);
+                
+                if(response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                if (user == null || !_encryptsService.VerifyPassword(loginDTO.Password, user.Salt, user.Password))
-                {
-                    return Unauthorized();
-                }
+                string token = _authService.MakeToken(loginDTO.Email, 10);
 
-                var claims = new List<Claim>();
-
-                if (user.Email.Equals("ana@gmail.com"))
-                    claims.Add(new Claim ("Admin", user.Email ));
-
-                claims.Add(new Claim("Client", user.Email ));
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                return Ok();
+                return StatusCode(response.StatusCode, token);
 
             }
             catch (Exception ex)
@@ -54,18 +37,5 @@ namespace HomeBankingMindHub.Controllers
             }
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            try
-            {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
     }
 }

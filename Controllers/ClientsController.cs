@@ -56,7 +56,7 @@ namespace HomeBankingMindHub.Controllers
         }
 
         [HttpGet("current")]
-        [Authorize(Policy = "ClientOnly")]
+
         public IActionResult GetCurrent()
         {
             try
