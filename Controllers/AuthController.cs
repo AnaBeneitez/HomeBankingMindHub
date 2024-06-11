@@ -14,12 +14,10 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IClientRepository _clientRepository;
-        private readonly IEncryptsService _encryptsService;
-        public AuthController(IClientRepository clientRepository, IEncryptsService encryptsService)
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService authService)
         {
-            _clientRepository = clientRepository;
-            _encryptsService = encryptsService;
+            _authService = authService;
         }
 
         [HttpPost("login")]
@@ -27,25 +25,15 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                Client user = _clientRepository.FindByEmail(loginDTO.Email);
+                ResponseModel<ClaimsIdentity> response = _authService.Login(loginDTO);
 
-                if (user == null || !_encryptsService.VerifyPassword(loginDTO.Password, user.Salt, user.Password))
-                {
-                    return Unauthorized();
-                }
+                if (response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                var claims = new List<Claim>();
+                //Si la autenticación sale bien, creo la cookie.
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Model));
 
-                if (user.Email.Equals("ana@gmail.com"))
-                    claims.Add(new Claim ("Admin", user.Email ));
-
-                claims.Add(new Claim("Client", user.Email ));
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                return Ok();
+                return StatusCode(response.StatusCode, response.Message);
 
             }
             catch (Exception ex)
@@ -59,6 +47,7 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
+                //Cierro sesión y elimino la cookie.
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 return Ok();
             }
