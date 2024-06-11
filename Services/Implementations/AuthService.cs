@@ -51,7 +51,7 @@ namespace HomeBankingMindHub.Services.Implementations
             claims.Add(new Claim("Client", email));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWT:Key").Value));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var securityToken = new JwtSecurityToken(
                 claims: claims,
