@@ -34,7 +34,6 @@ namespace HomeBankingMindHub.Services.Implementations
                 return new ResponseModel<ClaimsIdentity>(401, "Credenciales inválidas", null);
             }
 
-            //Creo las claims que necesito.
             var claims = new List<Claim>();
 
             if (user.Email.Equals("ana@gmail.com"))
@@ -42,7 +41,6 @@ namespace HomeBankingMindHub.Services.Implementations
 
             claims.Add(new Claim("Client", user.Email));
 
-            //Creo un ClaimsIdentity con las claims que cree y el esquema de autenticación.
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             return new ResponseModel<ClaimsIdentity>(200, "Ok", claimsIdentity);

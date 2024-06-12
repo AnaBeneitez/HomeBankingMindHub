@@ -30,7 +30,6 @@ namespace HomeBankingMindHub.Controllers
                 if (response.StatusCode != 200)
                     return StatusCode(response.StatusCode, response.Message);
 
-                //Si la autenticación sale bien, creo la cookie.
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Model));
 
                 return StatusCode(response.StatusCode, response.Message);
@@ -47,7 +46,6 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                //Cierro sesión y elimino la cookie.
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 return Ok();
             }
