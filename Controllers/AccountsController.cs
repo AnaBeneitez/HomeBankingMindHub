@@ -1,5 +1,7 @@
-﻿using HomeBankingMindHub.Models.DTOS;
+﻿using HomeBankingMindHub.Models;
+using HomeBankingMindHub.Models.DTOS;
 using HomeBankingMindHub.Repositories.Interfaces;
+using HomeBankingMindHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +11,11 @@ namespace HomeBankingMindHub.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IAccountRepository _accountRepository;
+        private readonly IAccountsService _accountsService;
 
-        public AccountsController(IAccountRepository accountRepository)
+        public AccountsController(IAccountsService accountsService)
         {
-            this._accountRepository = accountRepository;
+            this._accountsService = accountsService;
         }
 
         [HttpGet]
@@ -21,11 +23,9 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                var accounts = _accountRepository.GetAllAccounts();
-                var accountsDTO = new List<AccountDTO>();
-                accountsDTO = accounts.Select(a => new AccountDTO(a)).ToList();
+                ResponseCollection<AccountDTO> response = _accountsService.Get();
 
-                return Ok(accountsDTO);
+                return StatusCode(response.StatusCode, response.Collection);
             }
             catch (Exception ex)
             {
@@ -38,16 +38,12 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                var accountById = _accountRepository.FindById(id);
+                ResponseModel<AccountDTO> response = _accountsService.GetById(id);
 
-                if (accountById == null)
-                {
-                    return Forbid();
-                }
+                if(response.StatusCode != 200)
+                    return StatusCode(response.StatusCode, response.Message);
 
-                var accountByIdDTO = new AccountDTO(accountById);
-
-                return Ok(accountByIdDTO);
+                return StatusCode(response.StatusCode, response.Model);
             }
             catch (Exception ex)
             {

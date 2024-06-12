@@ -21,25 +21,17 @@ namespace HomeBankingMindHub.Services.Implementations
             _cardRepository = cardRepository;
             _encryptsService = encryptsService;
         }
-        public ResponseModel<ClientDTO> CreateAccount(string email)
+        public Response CreateAccount(string email)
         {
-            ResponseModel<ClientDTO> response = new ResponseModel<ClientDTO>();
+            Response response;
 
             Client client = _clientRepository.FindByEmail(email);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
+                return new Response(404, "El usuario no existe");
 
             if(client.Accounts.Count >= 3)
-            {
-                response.StatusCode = 403;
-                response.Message = "El cliente ya posee 3 cuentas asociadas";
-                return response;
-            }
+                return new Response(403, "El cliente ya posee 3 cuentas asociadas");
 
             Account newAccount = new Account
             {
@@ -50,10 +42,7 @@ namespace HomeBankingMindHub.Services.Implementations
 
             _accountRepository.Save(newAccount);
 
-            response.StatusCode = 201;
-            response.Message = "Ok";
-
-            return response;
+            return new Response(201, "Ok");
         }
 
         public ResponseCollection<ClientDTO> Get()
@@ -70,23 +59,15 @@ namespace HomeBankingMindHub.Services.Implementations
 
         public ResponseCollection<AccountClientDTO> GetAccounts(string email)
         {
-            ResponseCollection<AccountClientDTO> response = new ResponseCollection<AccountClientDTO>();
+            ResponseCollection<AccountClientDTO> response;
 
             var client = _clientRepository.FindByEmail(email);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
+                return new ResponseCollection<AccountClientDTO>(404, "El usuario no existe", null);
 
             if (client.Accounts == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "No hay cuentas";
-                return response;
-            }
+                return new ResponseCollection<AccountClientDTO>(404, "No hay cuentas", null);
 
             List<AccountClientDTO> accountsDTO = new List<AccountClientDTO>();
             foreach (var a in client.Accounts)
@@ -95,66 +76,50 @@ namespace HomeBankingMindHub.Services.Implementations
                 accountsDTO.Add(accountDTO);
             }
 
-            response = new ResponseCollection<AccountClientDTO>(200, "Ok", accountsDTO);
-
-            return response;
+            return new ResponseCollection<AccountClientDTO>(200, "Ok", accountsDTO);
         }
 
         public ResponseModel<ClientDTO> GetById(long id)
         {
-            ResponseModel<ClientDTO> response = new ResponseModel<ClientDTO>();
+            ResponseModel<ClientDTO> response;
 
             var client = _clientRepository.FindById(id);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
+                return new ResponseModel<ClientDTO>(404, "El usuario no existe", null);
 
             var clientDTO = new ClientDTO(client);
-            response.StatusCode = 200;
-            response.Message = "Ok";
-            response.Model = clientDTO;
 
-            return response;
-
+            return new ResponseModel<ClientDTO>(200, "Ok", clientDTO);
         }
 
         public ResponseModel<ClientDTO> GetCurrent(string email)
         {
-            ResponseModel<ClientDTO> response = new ResponseModel<ClientDTO>();
+            ResponseModel<ClientDTO> response;
 
             Client client = _clientRepository.FindByEmail(email);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
+                return new ResponseModel<ClientDTO>(404, "El usuario no existe", null);
 
             var clientDTO = new ClientDTO(client);
-            response.StatusCode = 200;
-            response.Message = "Ok";
-            response.Model = clientDTO;
 
-            return response;
+            return new ResponseModel<ClientDTO>(200, "Ok", clientDTO);
         }
 
         public ResponseModel<ClientDTO> Post(ClientRegisterDTO client)
         {
-            ResponseModel<ClientDTO> response = new ResponseModel<ClientDTO>();
+            ResponseModel<ClientDTO> response;
+
+            if (String.IsNullOrEmpty(client.Email) || String.IsNullOrEmpty(client.Password) || 
+                String.IsNullOrEmpty(client.FirstName) || String.IsNullOrEmpty(client.LastName))
+                return new ResponseModel<ClientDTO>(400, "Datos inválidos", null);
+
 
             Client user = _clientRepository.FindByEmail(client.Email);
 
             if (user != null)
-            {
-                response.StatusCode = 403;
-                response.Message = "El email ya se encuentar registrado";
-                return response;
-            }
+                return new ResponseModel<ClientDTO>(403, "El email ya se encuentar registrado", null);
 
             Client newClient = new Client()
             {
@@ -172,12 +137,9 @@ namespace HomeBankingMindHub.Services.Implementations
             _clientRepository.Save(newClient);
 
             var dbClient = _clientRepository.FindByEmail(newClient.Email);
+
             if (dbClient == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "Usuario no encontrado";
-                return response;
-            }
+                return new ResponseModel<ClientDTO>(404, "Usuario no encontrado", null);
 
             Account newAccount = new Account
             {
@@ -187,84 +149,53 @@ namespace HomeBankingMindHub.Services.Implementations
             _accountRepository.Save(newAccount);
 
             var clientDTO = new ClientDTO(dbClient);
-            response.StatusCode = 201;
-            response.Message = "Ok";
-            response.Model = clientDTO;
 
-            return response;
+            return new ResponseModel<ClientDTO>(201, "Ok", clientDTO);
         }
 
-        public Models.Response CreateCard(string email, NewCardDTO newCard)
+        public Response CreateCard(string email, NewCardDTO newCard)
         {
-            Models.Response response = new Models.Response();
+            Response response;
 
             Client client = _clientRepository.FindByEmail(email);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
-
-            bool allow = true;
+                return new Response(404, "El usuario no existe");
 
             foreach (var card in client.Cards)
             {
-                if(card.Type == newCard.type.ToUpper() && card.Color == newCard.color.ToUpper())
-                    allow = false;
+                if (card.Type == newCard.type.ToUpper() && card.Color == newCard.color.ToUpper())
+                    return new Response(403, "Ya posee una tarjeta igual");
             }
 
-            if (allow)
+            CardType cardType = (CardType)Enum.Parse(typeof(CardType), newCard.type.ToUpper());
+            CardColor cardColor = (CardColor)Enum.Parse(typeof(CardColor), newCard.color.ToUpper());
+
+            Card newCardToSave = new Card
             {
+                CardHolder = $"{client.FirstName}, {client.LastName}",
+                Type = cardType.ToString(),
+                Color = cardColor.ToString(),
+                FromDate = DateTime.Now,
+                ThruDate = DateTime.Now.AddYears(5),
+                ClientId = client.Id
+            };
 
-                CardType cardType = (CardType)Enum.Parse(typeof(CardType), newCard.type.ToUpper());
-                CardColor cardColor = (CardColor)Enum.Parse(typeof(CardColor), newCard.color.ToUpper());
+            _cardRepository.Save(newCardToSave);
 
-                Card newCardToSave = new Card
-                {
-                    CardHolder = $"{client.FirstName}, {client.LastName}",
-                    Type = cardType.ToString(),
-                    Color = cardColor.ToString(),
-                    FromDate = DateTime.Now,
-                    ThruDate = DateTime.Now.AddYears(5),
-                    ClientId = client.Id
-                };
-
-                _cardRepository.Save(newCardToSave);
-
-                response.StatusCode = 201;
-                response.Message = "Ok";
-                return response;
-
-            }
-            else
-            {
-                response.StatusCode = 403;
-                response.Message = "Ya posee una tarjeta igual";
-                return response;
-            }
-
+            return new Response(201, "Ok");
         }
         public ResponseCollection<CardDTO> GetCards(string email)
         {
-            ResponseCollection<CardDTO> response = new ResponseCollection<CardDTO>();
+            ResponseCollection<CardDTO> response;
 
             var client = _clientRepository.FindByEmail(email);
 
             if (client == null)
-            {
-                response.StatusCode = 404;
-                response.Message = "El usuario no existe";
-                return response;
-            }
+                return new ResponseCollection<CardDTO>(404, "El usuario no existe", null);
 
             if (client.Cards.IsNullOrEmpty())
-            {
-                response.StatusCode = 404;
-                response.Message = "No hay tarjetas";
-                return response;
-            }
+                return new ResponseCollection<CardDTO>(404, "No hay tarjetas", null);
 
             List<CardDTO> cardsDTO = new List<CardDTO>();
 
@@ -274,9 +205,7 @@ namespace HomeBankingMindHub.Services.Implementations
                 cardsDTO.Add(cardDTO);
             }
 
-            response = new ResponseCollection<CardDTO>(200, "Ok", cardsDTO);
-
-            return response;
+            return new ResponseCollection<CardDTO>(200, "Ok", cardsDTO);
         }
     }
 }

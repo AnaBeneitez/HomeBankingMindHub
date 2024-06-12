@@ -82,9 +82,6 @@ namespace HomeBankingMindHub.Controllers
         {
             try
             {
-                if (String.IsNullOrEmpty(client.Email) || String.IsNullOrEmpty(client.Password) || String.IsNullOrEmpty(client.FirstName) || String.IsNullOrEmpty(client.LastName))
-                    return StatusCode(400, "datos inválidos");
-
                 ResponseModel<ClientDTO> response = _clientsService.Post(client);
 
                 if (response.StatusCode != 201)
@@ -107,12 +104,12 @@ namespace HomeBankingMindHub.Controllers
             {
                 string email = User.FindFirst("Client") != null ? User.FindFirst("CLient").Value : string.Empty;
 
-                ResponseModel<ClientDTO> response = _clientsService.CreateAccount(email);
+                Response response = _clientsService.CreateAccount(email);
 
                 if (response.StatusCode != 201)
                     return StatusCode(response.StatusCode, response.Message);
 
-                return StatusCode(response.StatusCode, response.Model);
+                return StatusCode(response.StatusCode, response.Message);
 
             }
             catch (Exception ex)
