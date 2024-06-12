@@ -50,11 +50,8 @@ namespace HomeBankingMindHub.Services.Implementations
 
             claims.Add(new Claim("Client", email));
 
-            //Creo una clave simétrica utilizando la clave secreta almacenada en la configuración de la aplicación
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWT:Key").Value));
 
-            //Creo las credenciales de firma utilizando la clave simétrica creada anteriormente y el algoritmo HMAC-SHA256
-            //Sirven para que el token sea autentificado en el back
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var securityToken = new JwtSecurityToken(

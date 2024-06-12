@@ -50,9 +50,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            //Indica que se debe validar la clave de firma del emisor del token.
             ValidateIssuerSigningKey = true,
-            //Especifica la clave de firma que se usará para validar la firma del token. Para poder compararla.
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
 
             ValidateIssuer = false,
