@@ -3,12 +3,12 @@
 <h1 align="left">:book: Descripcion del proyecto base</h1>
 <p>Es un proyecto que simula un home banking con sus funcionalidades básicas:</p>
 <ul>
-  <li>:computer: Login y register</li>
-  <li>:dollar: Crear una cuenta bancaria</li>
-  <li>:receipt: Ver los movimientos de la cuenta</li>
-  <li>:money_with_wings:	Hacer transferencias</li>
-  <li>:credit_card: Crear tarjetas de débito y crédito</li>
-  <li>:moneybag: Solicitar préstamos</li>  
+  <p>:computer: Login y register</p>
+  <p>:dollar: Crear una cuenta bancaria</p>
+  <p>:receipt: Ver los movimientos de la cuenta</p>
+  <p>:money_with_wings:	Hacer transferencias</p>
+  <p>:credit_card: Crear tarjetas de débito y crédito</p>
+  <p>:moneybag: Solicitar préstamos</p>  
 </ul>
 <h1>:woman_student: Funcionalidades agregadas al proyecto base</h1>
 <p>Tuve la posibilidad de agregar ciertas cosas que consideraba necesarias, a saber:</p>
