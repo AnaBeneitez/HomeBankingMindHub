@@ -1,6 +1,6 @@
 <img src= "https://github.com/AnaBeneitez/HomeBankingMindHub/assets/129800955/8f6ef301-ec8f-4189-9a3e-151ba49c493d">
 <h1 align="center">HomeBanking MindHub Bootcamp Accenture</h1>
-<h1 align="left">:book: Descripcion del proyecto base</h1>
+<h1 align="left">:book: Descripción del proyecto base</h1>
 <p>Es un proyecto que simula un home banking con sus funcionalidades básicas:</p>
 <ul>
   <p>:computer: Login y register</p>
@@ -11,7 +11,7 @@
   <p>:moneybag: Solicitar préstamos</p>  
 </ul>
 <h1>:woman_student: Funcionalidades agregadas al proyecto base</h1>
-<p>Tuve la posibilidad de agregar ciertas cosas que consideraba necesarias, a saber:</p>
+<p>Tuve la posibilidad de agregar algunos extras que consideraba necesarios, a saber:</p>
 <ul>
   <li>Capa de servicios para poder trabajar con un código más mantenible, escalable, flexible y acorde a las buenas prácticas.</li>
   <li>Encriptación de contraseña para poder brindar mayor seguridad a los datos sensibles.</li>
