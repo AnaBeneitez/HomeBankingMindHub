@@ -4,7 +4,7 @@ using HomeBankingMindHub.Repositories.Implementations;
 using HomeBankingMindHub.Repositories.Interfaces;
 using HomeBankingMindHub.Services.Interfaces;
 
-namespace HomeBankingMindHub.Services
+namespace HomeBankingMindHub.Services.Implementations
 {
     public class AccountsService : IAccountsService
     {
@@ -12,7 +12,7 @@ namespace HomeBankingMindHub.Services
 
         public AccountsService(IAccountRepository accountRepository)
         {
-            this._accountRepository = accountRepository;
+            _accountRepository = accountRepository;
         }
 
         public ResponseCollection<AccountDTO> Get()
