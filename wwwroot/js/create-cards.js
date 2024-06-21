@@ -1,14 +1,29 @@
 var app = new Vue({
     el:"#app",
-    data:{
+    data: {
+        clientInfo: {},
         errorToats: null,
         errorMsg: null,
-        cardType:"none",
+        cardType: "none",
+        isAdmin: false,
         cardColor:"none",
     },
     methods:{
         formatDate: function(date){
             return new Date(date).toLocaleDateString('en-gb');
+        },
+        GetDataClient: function () {
+            //axios.get("/api/clients/1")
+            axios.get("/api/clients/current")
+                .then(function (response) {
+                    app.clientInfo = response.data;
+                    app.clientInfo.email == "ana@gmail.com" ? app.isAdmin = true : app.isAdmin = false;
+                })
+                .catch(function (error) {
+                    // handle error
+                    this.errorMsg = "Error getting data";
+                    this.errorToats.show();
+                })
         },
         signOut: function(){
             axios.post('/api/auth/logout')
@@ -40,8 +55,9 @@ var app = new Vue({
                     color: this.cardColor,
                 })
                     .then(() => { window.location.href = "/cards.html" })
-                    .catch(() => {
-                        this.errorMsg = "Sign up failed, check the information"
+                    .catch((error) => {
+                        console.log(error)
+                        this.errorMsg = error.response.data
                         this.errorToats.show();
                     })
             }
@@ -49,5 +65,6 @@ var app = new Vue({
     },
     mounted: function(){
         this.errorToats = new bootstrap.Toast(document.getElementById('danger-toast'));
+        this.GetDataClient();
     }
 })

@@ -38,8 +38,6 @@ namespace HomeBankingMindHub.Services.Implementations
 
             if (user.Email.Equals("ana@gmail.com"))
                 claims.Add(new Claim("Admin", user.Email));
-            if (user.Email.Contains("@accenture.com"))
-                Console.WriteLine("Es empleado");
 
             claims.Add(new Claim("Client", user.Email));
 
