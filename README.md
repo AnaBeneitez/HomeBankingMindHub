@@ -15,7 +15,7 @@
 <ul>
   <li>Capa de servicios para poder trabajar con un código más mantenible, escalable, flexible y acorde a las buenas prácticas.</li>
   <li>Encriptación de contraseña para poder brindar mayor seguridad a los datos sensibles.</li>
-  <li>Capa de seguridad mediante generación de token para inicio de sesión.</li>
+  <li>Capa de seguridad mediante generación de token para inicio de sesión. Esto se encuentra en una rama separada de la master llamada AddJWT.</li>
 </ul>
 <h1>:gear: Tecnologías utilizadas</h1>
 <p>Client: Vue, HTML, CSS</p>
