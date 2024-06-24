@@ -17,9 +17,9 @@ namespace HomeBankingMindHub.Models
             
         }
 
-        public ClientLoan(LoanApplicationDTO loanApplication, long clientId, int increase)
+        public ClientLoan(LoanApplicationDTO loanApplication, long clientId)
         {
-            Amount = (loanApplication.Amount * (1 + (increase / 100)));
+            Amount = loanApplication.Amount;
             Payments = loanApplication.Payments;
             ClientId = clientId;
             LoanId = loanApplication.LoanId;

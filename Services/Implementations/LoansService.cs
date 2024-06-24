@@ -43,20 +43,20 @@ namespace HomeBankingMindHub.Services.Implementations
             if (response.StatusCode != 201)
                 return response;
 
-            int percIncrease = 20;
+            ClientLoan newClientLoan = new ClientLoan(loanApplicationDTO, current.Id);
+            newClientLoan.Amount *= 1.2;
 
-            ClientLoan newClientLoan = new ClientLoan(loanApplicationDTO, current.Id, percIncrease);
             _clientLoanRepository.Save(newClientLoan);
 
             Transaction transaction = new Transaction(
                 TransactionType.CREDIT.ToString(),
-                newClientLoan.Amount,
+                loanApplicationDTO.Amount,
                 $"{loan.Name} - Préstamo aprobado",
                 DateTime.Now,
                 toAccount.Id);
             _transactionRepository.Save(transaction);
 
-            toAccount.Balance += newClientLoan.Amount;
+            toAccount.Balance += loanApplicationDTO.Amount;
             _accountRepository.Save(toAccount);
 
             return response;
